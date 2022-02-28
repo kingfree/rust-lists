@@ -1,1 +1,3 @@
 # Rust 的链表们……
+
+[Learning Rust With Entirely Too Many Linked Lists](https://rust-unofficial.github.io/too-many-lists/)
