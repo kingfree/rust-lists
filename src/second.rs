@@ -27,13 +27,10 @@ impl List {
     }
 
     pub fn pop(&mut self) -> Option<i32> {
-        match mem::replace(&mut self.head, None) {
-            None => None,
-            Some(node) => {
-                self.head = node.next;
-                Some(node.elem)
-            }
-        }
+        self.head.take().map(|node| {
+            self.head = node.next;
+            node.elem
+        })
     }
 }
 
