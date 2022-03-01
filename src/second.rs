@@ -40,6 +40,24 @@ impl<T> List<T> {
     }
 }
 
+// Tuple structs are an alternative form of struct,
+// useful for trivial wrappers around other types.
+pub struct IntoIter<T>(List<T>);
+
+impl<T> List<T> {
+    pub fn into_iter(self) -> IntoIter<T> {
+        IntoIter(self)
+    }
+}
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        // access fields of a tuple struct numerically
+        self.0.pop()
+    }
+}
+
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
         let mut cur_link = self.head.take();
@@ -47,6 +65,35 @@ impl<T> Drop for List<T> {
             cur_link = boxed_node.next.take();
         }
     }
+}
+
+#[test]
+fn basics() {
+    let mut list = List::new();
+
+    // Check empty list behaves right
+    assert_eq!(list.pop(), None);
+
+    // Populate list
+    list.push(1);
+    list.push(2);
+    list.push(3);
+
+    // Check normal removal
+    assert_eq!(list.pop(), Some(3));
+    assert_eq!(list.pop(), Some(2));
+
+    // Push some more just to make sure nothing's corrupted
+    list.push(4);
+    list.push(5);
+
+    // Check normal removal
+    assert_eq!(list.pop(), Some(5));
+    assert_eq!(list.pop(), Some(4));
+
+    // Check exhaustion
+    assert_eq!(list.pop(), Some(1));
+    assert_eq!(list.pop(), None);
 }
 
 #[test]
@@ -64,4 +111,18 @@ fn peek() {
 
     assert_eq!(list.peek(), Some(&42));
     assert_eq!(list.pop(), Some(42));
+}
+
+#[test]
+fn into_iter() {
+    let mut list = List::new();
+    list.push(1);
+    list.push(2);
+    list.push(3);
+
+    let mut iter = list.into_iter();
+    assert_eq!(iter.next(), Some(3));
+    assert_eq!(iter.next(), Some(2));
+    assert_eq!(iter.next(), Some(1));
+    assert_eq!(iter.next(), None);
 }
