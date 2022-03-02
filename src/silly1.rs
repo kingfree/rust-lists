@@ -73,7 +73,7 @@ impl<T> Stack<T> {
 
     pub fn push(&mut self, elem: T) {
         let new_node = Box::new(Node {
-            elem: elem,
+            elem,
             next: None,
         });
 
