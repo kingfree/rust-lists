@@ -34,18 +34,16 @@ impl<T> List<T> {
     pub fn head(&self) -> Option<&T> {
         self.head.as_ref().map(|node| &node.elem)
     }
-}
 
-pub struct Iter<'a, T> {
-    next: Option<&'a Node<T>>,
-}
-
-impl<T> List<T> {
     pub fn iter(&self) -> Iter<'_, T> {
         Iter {
             next: self.head.as_deref(),
         }
     }
+}
+
+pub struct Iter<'a, T> {
+    next: Option<&'a Node<T>>,
 }
 
 impl<'a, T> Iterator for Iter<'a, T> {
